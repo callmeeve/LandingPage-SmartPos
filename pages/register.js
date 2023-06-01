@@ -1,8 +1,39 @@
 import Link from 'next/link';
 import React from 'react';
 import Image from 'next/image';
+import axios from 'axios';
+import { useState } from 'react';
+import { useRouter } from 'next/router';
 
 export default function Register() {
+    const router = useRouter();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
+    const [notelepon, setNoTelepon] = useState('');
+    const [message, setMessage] = useState('');
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await axios.post('/api/register', {
+                email,
+                password,
+                confirmPassword,
+                notelepon,
+            }); setMessage(response.data.message);
+
+            if (response.status === 200) {
+                router.push(`/verification?email=${email}`);
+            }
+        } catch (error) {
+            setMessage(error.response.data.message);
+            // Tampilkan pesan error atau lakukan penanganan error sesuai kebutuhan
+        }
+    };
+
     return (
         <>
             <div className="bg-white">
@@ -30,20 +61,47 @@ export default function Register() {
                                 <div className="flex flex-col space-y-2 text-left">
                                     <h2 className="text-3xl md:text-4xl font-bold">Daftar</h2>
                                     <p className="text-md md:text-xl">Pelayanan untuk memajukan perkembangan bisnis anda</p>
+                                    {message && <p>{message}</p>}
                                 </div>
-                                <form className="flex flex-col max-w-md space-y-5">
-                                    <input id="number" type="text" placeholder="No. Whatsapp/No. Telpon" className="flex px-3 py-2 md:px-4 md:py-3 border-2 border-black rounded-lg font-medium placeholder:font-normal" />
-                                    <input id="email" type="text" placeholder="Email" className="flex px-3 py-2 md:px-4 md:py-3 border-2 border-black rounded-lg font-medium placeholder:font-normal" />
-                                    <input id="password" type="password" name="password" placeholder="Kata Sandi" className="flex px-3 py-2 md:px-4 md:py-3 border-2 border-black rounded-lg font-medium placeholder:font-normal" />
-                                    <input id="c_password" type="password" name="password" placeholder="Ulang Kata Sandi" className="flex px-3 py-2 md:px-4 md:py-3 border-2 border-black rounded-lg font-medium placeholder:font-normal" />
-                                    <input id="c_password" type="text" name="referal" placeholder="Masukkan kode referal kamu (jika ada)" className="flex px-3 py-2 md:px-4 md:py-3 border-2 border-black rounded-lg font-medium placeholder:font-normal" />
+                                <form className="flex flex-col max-w-md space-y-5" onSubmit={handleSubmit}>
+                                    <input
+                                        id="number"
+                                        type="text"
+                                        value={notelepon} onChange={(e) => setNoTelepon(e.target.value)} required
+                                        placeholder="No. Whatsapp/No. Telpon"
+                                        className="flex px-3 py-2 md:px-4 md:py-3 border-2 border-black rounded-lg font-medium placeholder:font-normal"
+                                    />
+                                    <input
+                                        id="email"
+                                        type="text"
+                                        value={email}
+                                        onChange={(e) => setEmail(e.target.value)} required
+                                        placeholder="Email"
+                                        className="flex px-3 py-2 md:px-4 md:py-3 border-2 border-black rounded-lg font-medium placeholder:font-normal"
+                                    />
+                                    <input
+                                        id="password"
+                                        type="password"
+                                        name="password"
+                                        value={password} onChange={(e) => setPassword(e.target.value)} required
+                                        placeholder="Kata Sandi"
+                                        className="flex px-3 py-2 md:px-4 md:py-3 border-2 border-black rounded-lg font-medium placeholder:font-normal"
+                                    />
+                                    <input
+                                        id="c_password"
+                                        type="password"
+                                        name="confirm password"
+                                        value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} required
+                                        placeholder="Ulang Kata Sandi"
+                                        className="flex px-3 py-2 md:px-4 md:py-3 border-2 border-black rounded-lg font-medium placeholder:font-normal"
+                                    />
                                     <div className="flex items-center mb-6 -mt-4">
                                         <div className="flex mr-auto">
                                             <input id="link-checkbox" type="checkbox" defaultValue className="w-4 h-4 mt-0.5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600" />
                                             <label htmlFor="link-checkbox" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Dengan mendaftar, saya menyatakan telah membaca dan menyetujui <a href="#" className="text-blue-600 dark:text-blue-500 hover:underline">Ketentuan Layanan & Kebijakan SmartPos</a>.</label>
                                         </div>
                                     </div>
-                                    <Link href="verification" className="flex items-center justify-center flex-none px-3 py-2 md:px-4 md:py-3 border-2 rounded-lg font-medium border-black bg-black text-white">Daftar</Link>
+                                    <button type="submit" className="flex items-center justify-center flex-none px-3 py-2 md:px-4 md:py-3 border-2 rounded-lg font-medium border-black bg-black text-white">Daftar</button>
                                     <div className="flex justify-center items-center">
                                         <span className="w-full border border-black" />
                                         <span className="px-4">Or</span>

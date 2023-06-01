@@ -21,7 +21,7 @@ export default function Login() {
 
             // Jika login berhasil, arahkan pengguna ke halaman berikutnya
             if (response.status === 200) {
-                router.push('/verification');
+                router.push(`/verification?email=${email}`);
             }
         } catch (error) {
             setMessage(error.response.data.message);
